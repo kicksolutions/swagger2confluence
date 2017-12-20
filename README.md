@@ -22,7 +22,10 @@ Following are the tools which this project internally uses:
 based on the attributes provided.
 
 It will first Create Page whose Title = Title of API Specified in Swagger then creates child under it with Version-Title of API
+
 ![Swagger-Confluence-Root](examples/root.jpg)
+
+Confluence Page Uses Swagger Macro, this will help us to see full view of Swagger inside Confluence
 
 ## swagger2confluence-core: 
 
