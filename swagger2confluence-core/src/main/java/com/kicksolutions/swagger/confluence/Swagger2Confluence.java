@@ -5,8 +5,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.kicksolutions.cliargs.CliArgs;
 import com.kicksolutions.swagger.confluence.vo.ConfluenceVo;
-import com.kicksolutions.swagger.plantuml.cliargs.CliArgs;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
@@ -152,7 +152,7 @@ public class Swagger2Confluence {
 		if(StringUtils.isNotEmpty(clientkitURL)){
 			macroString.append("<tr>")
 			.append("<td colspan=\"1\">")
-			.append("<strong>Clientkit</strong>")
+			.append("<strong>Java Client</strong>")
 			.append("</td>")
 			.append("<td colspan=\"1\">")
 			.append("<a href=\"")

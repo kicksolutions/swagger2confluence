@@ -1,4 +1,4 @@
-package com.kicksolutions.swagger.plantuml.cliargs;
+package com.kicksolutions.cliargs;
 
 import java.util.HashMap;
 
