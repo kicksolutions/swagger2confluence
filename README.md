@@ -1,6 +1,5 @@
-[![Build Status](https://travis-ci.org/kicksolutions/swagger2puml.svg?branch=master)](https://travis-ci.org/kicksolutions/swagger2puml)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-codegen-project/badge.svg?style=plastic)](https://oss.sonatype.org/#nexus-search;gav~io.github.kicksolutions~swagger-plantuml-core~~~)
-[![codecov](https://codecov.io/gh/kicksolutions/swagger2puml/branch/master/graph/badge.svg)](https://codecov.io/gh/kicksolutions/swagger2puml)
+[![Build Status](https://travis-ci.org/kicksolutions/swagger2confluence.svg?branch=master)](https://travis-ci.org/kicksolutions/swagger2confluence)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-codegen-project/badge.svg?style=plastic)](https://oss.sonatype.org/#nexus-search;gav~io.github.kicksolutions~swagger-confluence-core~~~)
 
 # Swagger2Confluence
 
