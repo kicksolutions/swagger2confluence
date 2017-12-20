@@ -26,8 +26,7 @@ public class SwaggerConfluenceUploader {
 	 * | 
 	 * |----- V1.0 Title
 	 * | 
-	 * |----- V1.1 Title
-	 * 
+	 * |----- V1.1 Title 
 	 * 
 	 * @param specFile
 	 * @param parentPageID
@@ -35,10 +34,12 @@ public class SwaggerConfluenceUploader {
 	 * @param password
 	 * @param confluenceURL
 	 * @param spaceKey
-	 * @param htmlDocumentationURL 
-	 * @param clientkitURL 
+	 * @param alternateURL
+	 * @param clientkitURL
+	 * @param htmlDocumentationURL
+	 * @return
 	 */
-	public void processSwagger2Confluence(String specFile, String parentPageID, String userName, String password,
+	public String processSwagger2Confluence(String specFile, String parentPageID, String userName, String password,
 			String confluenceURL, String spaceKey,String alternateURL, String clientkitURL, String htmlDocumentationURL) {
 		Swagger swaggerObject = new SwaggerParser().read(specFile);
 		
@@ -65,6 +66,8 @@ public class SwaggerConfluenceUploader {
 						specFile, versionTitle, "0", swaggerPageContent, spaceKey, false));
 				
 				LOGGER.log(Level.INFO, "Done.... by generating Pages "+ parentPageVo.getPageID() +" and "+ childPageVo.getPageID());
+				
+				return childPageVo.getPageID();
 			}
 			else{
 				throw new RuntimeException("Swagger Definition is missing version and title information");
