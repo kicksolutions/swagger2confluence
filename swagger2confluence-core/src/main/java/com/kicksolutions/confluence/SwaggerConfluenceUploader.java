@@ -48,13 +48,13 @@ public class SwaggerConfluenceUploader {
 			String version = swaggerObject.getInfo().getVersion();
 			String title = swaggerObject.getInfo().getTitle();
 			
-			String parentTitle = new StringBuilder().append(title).toString();
-			String versionTitle = new StringBuilder().append("V").append(version).append("-").append(title).toString();
-			String swaggerPageContent =  StringUtils.isNotEmpty(alternateURL) ? swaggerMacroContent(alternateURL,clientkitURL,htmlDocumentationURL) : swaggerMacroContent(specFile,clientkitURL,htmlDocumentationURL);
-			
 			if (StringUtils.isNotEmpty(version) && StringUtils.isNotEmpty(title)) {
+				String parentTitle = new StringBuilder().append(title).toString();
+				String versionTitle = new StringBuilder().append("V").append(version).append(" - ").append(parentTitle).toString();
+				String swaggerPageContent =  StringUtils.isNotEmpty(alternateURL) ? swaggerMacroContent(alternateURL,clientkitURL,htmlDocumentationURL) : swaggerMacroContent(specFile,clientkitURL,htmlDocumentationURL);
+								
 				// Create a Page whose name is same as Swagger Title Ex: Pet Store
-				LOGGER.log(Level.INFO, "About to generate Page -->" + title);
+				LOGGER.log(Level.INFO, "About to generate Page -->" + parentTitle);
 				
 				ConfluenceVo parentPageVo = createSwaggerPage(new ConfluenceVo(userName, password, confluenceURL, "",
 						parentPageID, "", parentTitle, "0", parentPageContent(versionTitle), spaceKey, false));

@@ -13,7 +13,8 @@ import com.kicksolutions.CliArgs;
 public class Swagger2Confluence {
 	private static final Logger LOGGER = Logger.getLogger(Swagger2Confluence.class.getName());
 	private static final String USAGE = new StringBuilder()
-			.append(" Usage: com.kicksolutions.swagger.confluence.Swagger2Confluence <options> \n")
+			.append(" Usage: ")
+			.append(Swagger2Confluence.class.getName()).append(" <options> \n")
 			.append(" -i <Spec File> ").append(" -a <Parent Page Id> ").append(" -u <User Name> ")
 			.append(" -p <Password> ").append(" -l <Conflunce URL> ").append(" -s <Confluenec Space key>")
 			.append(" -r <alternate URL>").append("-c <Clinet Kit URL>").append("-d <HTML Documentation URL>").toString();
