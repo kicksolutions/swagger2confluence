@@ -1,11 +1,11 @@
-package com.kicksolutions.swagger.confluence;
+package com.kicksolutions.confluence;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.kicksolutions.swagger.confluence.vo.ConfluenceVo;
+import com.kicksolutions.confluence.vo.ConfluenceVo;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;

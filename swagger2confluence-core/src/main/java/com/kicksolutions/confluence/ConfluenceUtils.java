@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.kicksolutions.swagger.confluence;
+package com.kicksolutions.confluence;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -19,7 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.kicksolutions.swagger.confluence.vo.ConfluenceVo;
+import com.kicksolutions.confluence.vo.ConfluenceVo;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;

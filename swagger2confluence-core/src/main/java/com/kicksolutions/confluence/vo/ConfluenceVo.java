@@ -1,4 +1,4 @@
-package com.kicksolutions.swagger.confluence.vo;
+package com.kicksolutions.confluence.vo;
 
 /**
  * 

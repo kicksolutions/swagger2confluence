@@ -1,10 +1,10 @@
-package com.kicksolutions.cliargs;
+package com.kicksolutions.confluence;
 
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.kicksolutions.swagger.confluence.SwaggerConfluenceUploader;
+import com.kicksolutions.CliArgs;
 
 /**
  * MSANTOSH

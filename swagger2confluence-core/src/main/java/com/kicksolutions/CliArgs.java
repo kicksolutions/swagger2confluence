@@ -1,4 +1,4 @@
-package com.kicksolutions.cliargs;
+package com.kicksolutions;
 
 import java.util.HashMap;
 
