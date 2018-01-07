@@ -6,6 +6,8 @@ package com.kicksolutions.confluence;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -30,7 +32,10 @@ import net.minidev.json.parser.JSONParser;
  *
  */
 public class ConfluenceUtils {
-
+	
+	private static final Logger LOGGER = Logger.getLogger(ConfluenceUtils.class.getName());
+	
+	
 	private static final String EXPAND = "expand";
 	private static final String ID = "id";
 	private static final String SPACE_KEY = "spaceKey";
@@ -53,11 +58,15 @@ public class ConfluenceUtils {
 				.queryParam(SPACE_KEY, confluenceVo.getSpaceKey()).queryParam(TITLE, confluenceVo.getTitle())
 				.queryParam(EXPAND, "body.storage,version,ancestors").build().toUri();
 
+		LOGGER.log(java.util.logging.Level.FINEST, "Method GET: "+targetUrl);
+		
 		final ResponseEntity<String> responseEntity = new RestTemplate().exchange(targetUrl, HttpMethod.GET,
 				requestEntity, String.class);
-
+				
 		final String jsonBody = responseEntity.getBody();
 
+		LOGGER.log(java.util.logging.Level.FINEST, "Response: "+jsonBody);
+		
 		try {
 			final String id = JsonPath.read(jsonBody, "$.results[0].id");
 			final Integer version = JsonPath.read(jsonBody, "$.results[0].version.number");
@@ -97,6 +106,11 @@ public class ConfluenceUtils {
 				confluenceVo.getContent(), confluenceVo.getSpaceKey()).toJSONString();
 
 		final HttpEntity<String> requestEntity = new HttpEntity<>(jsonPostBody, httpHeaders);
+		
+		LOGGER.log(java.util.logging.Level.FINEST, "Method GET: "+targetUrl);
+		LOGGER.log(Level.FINEST, "jsonPostBody" +jsonPostBody);
+		LOGGER.log(Level.FINEST, "httpHeaders " + httpHeaders.toString());
+		
 		final HttpEntity<String> responseEntity = new RestTemplate().exchange(targetUrl, HttpMethod.POST, requestEntity,
 				String.class);
 

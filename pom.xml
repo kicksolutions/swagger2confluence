@@ -4,7 +4,7 @@
 
 	<groupId>io.github.kicksolutions</groupId>
 	<artifactId>swagger-confluence-reactor</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<url>https://github.com/kicksolutions/swagger2puml</url>

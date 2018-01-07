@@ -17,7 +17,8 @@ public class Swagger2Confluence {
 			.append(Swagger2Confluence.class.getName()).append(" <options> \n")
 			.append(" -i <Spec File> ").append(" -a <Parent Page Id> ").append(" -u <User Name> ")
 			.append(" -p <Password> ").append(" -l <Conflunce URL> ").append(" -s <Confluenec Space key>")
-			.append(" -r <alternate URL>").append("-c <Clinet Kit URL>").append("-d <HTML Documentation URL>").toString();
+			.append(" -r <alternate URL>").append("-c <Clinet Kit URL>").append("-d <HTML Documentation URL>")
+			.append(" -f <Prefix for Confluence Page>").toString();
 
 	public Swagger2Confluence() {
 		super();
@@ -47,12 +48,13 @@ public class Swagger2Confluence {
 		String alternateURL = cliArgs.getArgumentValue("-r", "");
 		String clientkitURL = cliArgs.getArgumentValue("-c", "");
 		String htmlDocumentationURL = cliArgs.getArgumentValue("-d", "");
-
+		String prefixForConfluencePage = cliArgs.getArgumentValue("-f", "");
+		
 		if (StringUtils.isNotEmpty(specFile) && StringUtils.isNotEmpty(parentPageID) && StringUtils.isNotEmpty(userName)
 				&& StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(confluenceURL)
 				&& StringUtils.isNotEmpty(confluenceSpaceKey)) {
 			processSwagger2Confluence(specFile, parentPageID, userName, password, confluenceURL, 
-					confluenceSpaceKey,alternateURL,clientkitURL,htmlDocumentationURL);
+					confluenceSpaceKey,alternateURL,clientkitURL,htmlDocumentationURL,prefixForConfluencePage);
 		} else {
 			LOGGER.severe(USAGE);
 		}
@@ -74,10 +76,13 @@ public class Swagger2Confluence {
 	 * @param spaceKey
 	 * @param htmlDocumentationURL 
 	 * @param clientkitURL 
+	 * @param prefixForConfluencePage
 	 */
 	private void processSwagger2Confluence(String specFile, String parentPageID, String userName, String password,
-			String confluenceURL, String spaceKey,String alternateURL, String clientkitURL, String htmlDocumentationURL) {
+			String confluenceURL, String spaceKey,String alternateURL, String clientkitURL, String htmlDocumentationURL, 
+			String prefixForConfluencePage) {
 		SwaggerConfluenceUploader confluenceUploader = new SwaggerConfluenceUploader();
-		confluenceUploader.processSwagger2Confluence(specFile, parentPageID, userName, password, confluenceURL, spaceKey, alternateURL, clientkitURL, htmlDocumentationURL);
+		confluenceUploader.processSwagger2Confluence(specFile, parentPageID, userName, password, confluenceURL, spaceKey, alternateURL, 
+				clientkitURL, htmlDocumentationURL,prefixForConfluencePage);
 	}
 }

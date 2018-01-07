@@ -40,7 +40,8 @@ public class SwaggerConfluenceUploader {
 	 * @return
 	 */
 	public String processSwagger2Confluence(String specFile, String parentPageID, String userName, String password,
-			String confluenceURL, String spaceKey,String alternateURL, String clientkitURL, String htmlDocumentationURL) {
+			String confluenceURL, String spaceKey,String alternateURL, String clientkitURL, String htmlDocumentationURL,
+			String prefixForConfluencePage) {
 		Swagger swaggerObject = new SwaggerParser().read(specFile);
 		
 		if(swaggerObject!=null){
@@ -49,8 +50,9 @@ public class SwaggerConfluenceUploader {
 			String title = swaggerObject.getInfo().getTitle();
 			
 			if (StringUtils.isNotEmpty(version) && StringUtils.isNotEmpty(title)) {
-				String parentTitle = new StringBuilder().append(title).toString();
-				String versionTitle = new StringBuilder().append("V").append(version).append(" - ").append(parentTitle).toString();
+				String parentTitle =  StringUtils.isEmpty(prefixForConfluencePage) ? new StringBuilder().append(title).toString() : new StringBuilder(prefixForConfluencePage).append(" - ").append(title).toString();
+				String versionTitle = StringUtils.isEmpty(prefixForConfluencePage) ? new StringBuilder().append("V").append(version).append(" - ").append(parentTitle).toString() : new StringBuilder().append("V").append(version).append(" - ").append(prefixForConfluencePage).append(" - ").append(parentTitle).toString();
+				
 				String swaggerPageContent =  StringUtils.isNotEmpty(alternateURL) ? swaggerMacroContent(alternateURL,clientkitURL,htmlDocumentationURL) : swaggerMacroContent(specFile,clientkitURL,htmlDocumentationURL);
 								
 				// Create a Page whose name is same as Swagger Title Ex: Pet Store
