@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>io.github.kicksolutions</groupId>
 		<artifactId>swagger-confluence-reactor</artifactId>
-		<version>1.0.0</version>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>io.github.kicksolutions</groupId>
 	<artifactId>swagger-confluence-core</artifactId>
-	<version>1.0.0</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<description>Core POM to upload Swagger to Confluence</description>
 
 	<packaging>jar</packaging>
