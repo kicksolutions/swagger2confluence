@@ -14,7 +14,7 @@
 	<description>Core POM to upload Swagger to Confluence</description>
 
 	<packaging>jar</packaging>
-	<name>${project.groupId}:${project.artifactId}</name>
+	<name>swagger-confluence-core</name>
 
 	<dependencies>
 		<dependency>
