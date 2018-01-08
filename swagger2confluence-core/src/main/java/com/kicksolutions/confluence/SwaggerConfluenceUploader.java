@@ -51,7 +51,7 @@ public class SwaggerConfluenceUploader {
 			
 			if (StringUtils.isNotEmpty(version) && StringUtils.isNotEmpty(title)) {
 				String parentTitle =  StringUtils.isEmpty(prefixForConfluencePage) ? new StringBuilder().append(title).toString() : new StringBuilder(prefixForConfluencePage).append(" - ").append(title).toString();
-				String versionTitle = StringUtils.isEmpty(prefixForConfluencePage) ? new StringBuilder().append("V").append(version).append(" - ").append(parentTitle).toString() : new StringBuilder().append("V").append(version).append(" - ").append(prefixForConfluencePage).append(" - ").append(parentTitle).toString();
+				String versionTitle = new StringBuilder().append("V").append(version).append(" - ").append(parentTitle).toString();
 				
 				String swaggerPageContent =  StringUtils.isNotEmpty(alternateURL) ? swaggerMacroContent(alternateURL,clientkitURL,htmlDocumentationURL) : swaggerMacroContent(specFile,clientkitURL,htmlDocumentationURL);
 								
