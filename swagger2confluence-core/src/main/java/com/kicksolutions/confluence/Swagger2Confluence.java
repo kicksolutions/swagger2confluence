@@ -83,6 +83,6 @@ public class Swagger2Confluence {
 			String prefixForConfluencePage) {
 		SwaggerConfluenceUploader confluenceUploader = new SwaggerConfluenceUploader();
 		confluenceUploader.processSwagger2Confluence(specFile, parentPageID, userName, password, confluenceURL, spaceKey, alternateURL, 
-				clientkitURL, htmlDocumentationURL,prefixForConfluencePage);
+				clientkitURL, htmlDocumentationURL,prefixForConfluencePage,true);
 	}
 }

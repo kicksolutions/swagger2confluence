@@ -16,17 +16,13 @@ import io.swagger.parser.SwaggerParser;
  */
 public class SwaggerConfluenceUploader {
 	private static final Logger LOGGER = Logger.getLogger(SwaggerConfluenceUploader.class.getName());
-	
+
 	public SwaggerConfluenceUploader() {
 		super();
 	}
-		
+
 	/**
-	 * Title: 
-	 * | 
-	 * |----- V1.0 Title
-	 * | 
-	 * |----- V1.1 Title 
+	 * Title: | |----- V1.0 Title | |----- V1.1 Title
 	 * 
 	 * @param specFile
 	 * @param parentPageID
@@ -37,49 +33,122 @@ public class SwaggerConfluenceUploader {
 	 * @param alternateURL
 	 * @param clientkitURL
 	 * @param htmlDocumentationURL
+	 * @param prefixForConfluencePage
+	 * @param isHierarchy
 	 * @return
 	 */
 	public String processSwagger2Confluence(String specFile, String parentPageID, String userName, String password,
-			String confluenceURL, String spaceKey,String alternateURL, String clientkitURL, String htmlDocumentationURL,
-			String prefixForConfluencePage) {
+			String confluenceURL, String spaceKey, String alternateURL, String clientkitURL,
+			String htmlDocumentationURL, String prefixForConfluencePage, boolean isHierarchy) {
 		Swagger swaggerObject = new SwaggerParser().read(specFile);
-		
-		if(swaggerObject!=null){
-						
+
+		if (swaggerObject != null) {
+
 			String version = swaggerObject.getInfo().getVersion();
 			String title = swaggerObject.getInfo().getTitle();
-			
+
 			if (StringUtils.isNotEmpty(version) && StringUtils.isNotEmpty(title)) {
-				String parentTitle =  StringUtils.isEmpty(prefixForConfluencePage) ? new StringBuilder().append(title).toString() : new StringBuilder(prefixForConfluencePage).append(" - ").append(title).toString();
-				String versionTitle = new StringBuilder().append("V").append(version).append(" - ").append(parentTitle).toString();
+				String parentTitle = StringUtils.isEmpty(prefixForConfluencePage)
+						? new StringBuilder().append(title).toString()
+						: new StringBuilder(prefixForConfluencePage).append(" - ").append(title).toString();
+				String versionTitle = new StringBuilder().append("V").append(version).append(" - ").append(parentTitle)
+						.toString();
 				
-				String swaggerPageContent =  StringUtils.isNotEmpty(alternateURL) ? swaggerMacroContent(alternateURL,clientkitURL,htmlDocumentationURL) : swaggerMacroContent(specFile,clientkitURL,htmlDocumentationURL);
-								
-				// Create a Page whose name is same as Swagger Title Ex: Pet Store
-				LOGGER.log(Level.INFO, "About to generate Page -->" + parentTitle);
-				
-				ConfluenceVo parentPageVo = createSwaggerPage(new ConfluenceVo(userName, password, confluenceURL, "",
-						parentPageID, "", parentTitle, "0", parentPageContent(versionTitle), spaceKey, false));
-				
-				LOGGER.log(Level.INFO, "About to generate Page --> " + versionTitle);
-				
-				// Create Child Page Under Parent ex: V1.0.0 Pet Store
-				ConfluenceVo childPageVo =  createSwaggerPage(new ConfluenceVo(userName, password, confluenceURL, "", parentPageVo.getPageID(),
-						specFile, versionTitle, "0", swaggerPageContent, spaceKey, false));
-				
-				LOGGER.log(Level.INFO, "Done.... by generating Pages "+ parentPageVo.getPageID() +" and "+ childPageVo.getPageID());
-				
-				return childPageVo.getPageID();
-			}
-			else{
+				if (isHierarchy) {
+					
+					return generatePagesinHierarchyMode(specFile, parentPageID, userName, password, confluenceURL,
+							spaceKey, alternateURL, clientkitURL, htmlDocumentationURL, parentTitle, versionTitle);
+				}else{
+					return generatePagesInNonHierarchyMode(specFile, parentPageID, userName, password, confluenceURL,
+							spaceKey, alternateURL, clientkitURL, htmlDocumentationURL, parentTitle, versionTitle);
+				}
+			} else {
 				throw new RuntimeException("Swagger Definition is missing version and title information");
 			}
-		}	
-		else{
+		} else {
 			throw new RuntimeException("Cannot Process Swagger Definition for the given URL");
 		}
 	}
-	
+
+	/**
+	 * 
+	 * @param specFile
+	 * @param parentPageID
+	 * @param userName
+	 * @param password
+	 * @param confluenceURL
+	 * @param spaceKey
+	 * @param alternateURL
+	 * @param clientkitURL
+	 * @param htmlDocumentationURL
+	 * @param parentTitle
+	 * @param versionTitle
+	 * @return
+	 */
+	private String generatePagesInNonHierarchyMode(String specFile, String parentPageID, String userName,
+			String password, String confluenceURL, String spaceKey, String alternateURL, String clientkitURL,
+			String htmlDocumentationURL, String parentTitle, String versionTitle) {
+		LOGGER.log(Level.INFO, "Hierarchy Mode is Set to False!!!");
+		
+		LOGGER.log(Level.INFO, "About to generate Page --> " + parentTitle);
+		
+		String swaggerPageContent = StringUtils.isNotEmpty(alternateURL)
+				? swaggerMacroContent(alternateURL, clientkitURL, htmlDocumentationURL)
+				: swaggerMacroContent(specFile, clientkitURL, htmlDocumentationURL);
+		
+		ConfluenceVo childPageVo = createSwaggerPage(
+				new ConfluenceVo(userName, password, confluenceURL, "", parentPageID, specFile,
+						versionTitle, "0", swaggerPageContent, spaceKey, false));
+		
+		LOGGER.log(Level.INFO, "Done.... by generating Page " + childPageVo.getPageID());
+
+		return childPageVo.getPageID();
+	}
+
+	/**
+	 * 
+	 * @param specFile
+	 * @param parentPageID
+	 * @param userName
+	 * @param password
+	 * @param confluenceURL
+	 * @param spaceKey
+	 * @param alternateURL
+	 * @param clientkitURL
+	 * @param htmlDocumentationURL
+	 * @param parentTitle
+	 * @param versionTitle
+	 * @return
+	 */
+	private String generatePagesinHierarchyMode(String specFile, String parentPageID, String userName, String password,
+			String confluenceURL, String spaceKey, String alternateURL, String clientkitURL,
+			String htmlDocumentationURL, String parentTitle, String versionTitle) {
+		LOGGER.log(Level.INFO, "Hierarchy Mode is Set to True!!!");
+		
+		String swaggerPageContent = StringUtils.isNotEmpty(alternateURL)
+				? swaggerMacroContent(alternateURL, clientkitURL, htmlDocumentationURL)
+				: swaggerMacroContent(specFile, clientkitURL, htmlDocumentationURL);
+
+		// Create a Page whose name is same as Swagger Title Ex: Pet
+		// Store
+		LOGGER.log(Level.INFO, "About to generate Page -->" + parentTitle);
+
+		ConfluenceVo parentPageVo = createSwaggerPage(new ConfluenceVo(userName, password, confluenceURL,
+				"", parentPageID, "", parentTitle, "0", parentPageContent(versionTitle), spaceKey, false));
+
+		LOGGER.log(Level.INFO, "About to generate Page --> " + versionTitle);
+
+		// Create Child Page Under Parent ex: V1.0.0 Pet Store
+		ConfluenceVo childPageVo = createSwaggerPage(
+				new ConfluenceVo(userName, password, confluenceURL, "", parentPageVo.getPageID(), specFile,
+						versionTitle, "0", swaggerPageContent, spaceKey, false));
+
+		LOGGER.log(Level.INFO, "Done.... by generating Pages " + parentPageVo.getPageID() + " and "
+				+ childPageVo.getPageID());
+
+		return childPageVo.getPageID();
+	}
+
 	/**
 	 * 
 	 * @param versionTitle
@@ -93,81 +162,49 @@ public class SwaggerConfluenceUploader {
 	/**
 	 * 
 	 * @param swaggerLoctaion
-	 * @param htmlDocumentationURL 
-	 * @param clientkitURL 
+	 * @param htmlDocumentationURL
+	 * @param clientkitURL
 	 * @return
 	 */
 	private String swaggerMacroContent(String swaggerLoctaion, String clientkitURL, String htmlDocumentationURL) {
-		
+
 		StringBuilder macroString = new StringBuilder();
-		macroString.append("<ac:structured-macro ac:name=\"multiexcerpt\" ac:schema-version=\"1\" ac:macro-id=\"cc925abe-8df0-4f3b-933c-3b88e4e3daec\">")
-		.append("<ac:parameter ac:name=\"MultiExcerptName\">pub_api_operation</ac:parameter>")
-		.append("<ac:parameter ac:name=\"atlassian-macro-output-type\">INLINE</ac:parameter>")
-		.append("<ac:rich-text-body>")
-		.append("<table class=\"relative-table wrapped\" style=\"width: 46.4912%;\">")
-		.append("<colgroup>")
-		.append("<col style=\"width: 38.3376%;\" />")
-		.append("<col style=\"width: 61.408%;\" />")
-		.append("</colgroup>")
-		.append("<tbody><tr>")
-		.append("<th>Description</th><th>Links</th>")
-		.append("</tr>");
-		
-		if(StringUtils.isNotEmpty(clientkitURL)){
-			macroString.append("<tr>")
-			.append("<td colspan=\"1\">")
-			.append("<strong>Java Client</strong>")
-			.append("</td>")
-			.append("<td colspan=\"1\">")
-			.append("<a href=\"")
-			.append(clientkitURL)
-			.append("\">")
-			.append("here")
-			.append("</a>")
-			.append("</td>")
-			.append("</tr>");
+		macroString
+				.append("<ac:structured-macro ac:name=\"multiexcerpt\" ac:schema-version=\"1\" ac:macro-id=\"cc925abe-8df0-4f3b-933c-3b88e4e3daec\">")
+				.append("<ac:parameter ac:name=\"MultiExcerptName\">pub_api_operation</ac:parameter>")
+				.append("<ac:parameter ac:name=\"atlassian-macro-output-type\">INLINE</ac:parameter>")
+				.append("<ac:rich-text-body>")
+				.append("<table class=\"relative-table wrapped\" style=\"width: 46.4912%;\">").append("<colgroup>")
+				.append("<col style=\"width: 38.3376%;\" />").append("<col style=\"width: 61.408%;\" />")
+				.append("</colgroup>").append("<tbody><tr>").append("<th>Description</th><th>Links</th>")
+				.append("</tr>");
+
+		if (StringUtils.isNotEmpty(clientkitURL)) {
+			macroString.append("<tr>").append("<td colspan=\"1\">").append("<strong>Java Client</strong>")
+					.append("</td>").append("<td colspan=\"1\">").append("<a href=\"").append(clientkitURL)
+					.append("\">").append("here").append("</a>").append("</td>").append("</tr>");
 		}
-		
-		if(StringUtils.isNotEmpty(htmlDocumentationURL)){
-			macroString.append("<tr>")
-			.append("<td colspan=\"1\">")
-			.append("<strong>Html Documentation</strong>")
-			.append("</td>")
-			.append("<td colspan=\"1\">")
-			.append("<a href=\"")
-			.append(htmlDocumentationURL)
-			.append("\">")
-			.append("here")
-			.append("</a>")
-			.append("</td>")
-			.append("</tr>");
+
+		if (StringUtils.isNotEmpty(htmlDocumentationURL)) {
+			macroString.append("<tr>").append("<td colspan=\"1\">").append("<strong>Html Documentation</strong>")
+					.append("</td>").append("<td colspan=\"1\">").append("<a href=\"").append(htmlDocumentationURL)
+					.append("\">").append("here").append("</a>").append("</td>").append("</tr>");
 		}
-		
-		if(StringUtils.isNotEmpty(swaggerLoctaion)){
-			macroString.append("<tr>")
-			.append("<td colspan=\"1\">")
-			.append("<strong>Swagger</strong>")
-			.append("</td>")
-			.append("<td colspan=\"1\">")
-			.append("<a href=\"")
-			.append(swaggerLoctaion)
-			.append("\">")
-			.append("here")
-			.append("</a>")
-			.append("</td>")
-			.append("</tr>");
+
+		if (StringUtils.isNotEmpty(swaggerLoctaion)) {
+			macroString.append("<tr>").append("<td colspan=\"1\">").append("<strong>Swagger</strong>").append("</td>")
+					.append("<td colspan=\"1\">").append("<a href=\"").append(swaggerLoctaion).append("\">")
+					.append("here").append("</a>").append("</td>").append("</tr>");
 		}
-		
+
 		macroString.append("</tbody></table>")
-		.append("<ac:structured-macro ac:name=\"open-api\" ac:schema-version=\"1\" ac:macro-id=\"86cdf71a-5e3a-4a30-833a-70548a238b4d\">")
-		.append("<ac:parameter ac:name=\"validatorUrl\">None</ac:parameter>")
-		.append("<ac:parameter ac:name=\"url\">")
-		.append(swaggerLoctaion)
-		.append("</ac:parameter></ac:structured-macro></ac:rich-text-body></ac:structured-macro>");
-		
+				.append("<ac:structured-macro ac:name=\"open-api\" ac:schema-version=\"1\" ac:macro-id=\"86cdf71a-5e3a-4a30-833a-70548a238b4d\">")
+				.append("<ac:parameter ac:name=\"validatorUrl\">None</ac:parameter>")
+				.append("<ac:parameter ac:name=\"url\">").append(swaggerLoctaion)
+				.append("</ac:parameter></ac:structured-macro></ac:rich-text-body></ac:structured-macro>");
+
 		return macroString.toString();
 	}
-	
 
 	/**
 	 * 
