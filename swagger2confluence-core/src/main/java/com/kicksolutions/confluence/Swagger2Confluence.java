@@ -1,9 +1,11 @@
 package com.kicksolutions.confluence;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kicksolutions.CliArgs;
 
 /**
@@ -53,8 +55,14 @@ public class Swagger2Confluence {
 		if (StringUtils.isNotEmpty(specFile) && StringUtils.isNotEmpty(parentPageID) && StringUtils.isNotEmpty(userName)
 				&& StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(confluenceURL)
 				&& StringUtils.isNotEmpty(confluenceSpaceKey)) {
+			try{
 			processSwagger2Confluence(specFile, parentPageID, userName, password, confluenceURL, 
 					confluenceSpaceKey,alternateURL,clientkitURL,htmlDocumentationURL,prefixForConfluencePage);
+			}
+			catch(Exception e){
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				throw new RuntimeException(e);
+			}
 		} else {
 			LOGGER.severe(USAGE);
 		}
@@ -77,10 +85,11 @@ public class Swagger2Confluence {
 	 * @param htmlDocumentationURL 
 	 * @param clientkitURL 
 	 * @param prefixForConfluencePage
+	 * @throws JsonProcessingException 
 	 */
 	private void processSwagger2Confluence(String specFile, String parentPageID, String userName, String password,
 			String confluenceURL, String spaceKey,String alternateURL, String clientkitURL, String htmlDocumentationURL, 
-			String prefixForConfluencePage) {
+			String prefixForConfluencePage) throws JsonProcessingException {
 		SwaggerConfluenceUploader confluenceUploader = new SwaggerConfluenceUploader();
 		confluenceUploader.processSwagger2Confluence(specFile, parentPageID, userName, password, confluenceURL, spaceKey, alternateURL, 
 				clientkitURL, htmlDocumentationURL,prefixForConfluencePage,true);

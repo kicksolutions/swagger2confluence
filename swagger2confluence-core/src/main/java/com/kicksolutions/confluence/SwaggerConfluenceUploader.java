@@ -5,10 +5,12 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kicksolutions.confluence.vo.ConfluenceVo;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
+import io.swagger.util.Yaml;
 
 /**
  * MSANTOSH
@@ -36,14 +38,17 @@ public class SwaggerConfluenceUploader {
 	 * @param prefixForConfluencePage
 	 * @param isHierarchy
 	 * @return
+	 * @throws JsonProcessingException 
 	 */
 	public String processSwagger2Confluence(String specFile, String parentPageID, String userName, String password,
 			String confluenceURL, String spaceKey, String alternateURL, String clientkitURL,
-			String htmlDocumentationURL, String prefixForConfluencePage, boolean isHierarchy) {
+			String htmlDocumentationURL, String prefixForConfluencePage, boolean isHierarchy) throws JsonProcessingException {
 		Swagger swaggerObject = new SwaggerParser().read(specFile);
 
 		if (swaggerObject != null) {
-
+			
+			String swaggerContent = Yaml.mapper().writeValueAsString(swaggerObject);
+			
 			String version = swaggerObject.getInfo().getVersion();
 			String title = swaggerObject.getInfo().getTitle();
 
@@ -57,10 +62,10 @@ public class SwaggerConfluenceUploader {
 				if (isHierarchy) {
 					
 					return generatePagesinHierarchyMode(specFile, parentPageID, userName, password, confluenceURL,
-							spaceKey, alternateURL, clientkitURL, htmlDocumentationURL, parentTitle, versionTitle);
+							spaceKey, alternateURL, clientkitURL, htmlDocumentationURL, parentTitle, versionTitle,swaggerContent);
 				}else{
 					return generatePagesInNonHierarchyMode(specFile, parentPageID, userName, password, confluenceURL,
-							spaceKey, alternateURL, clientkitURL, htmlDocumentationURL, parentTitle, versionTitle);
+							spaceKey, alternateURL, clientkitURL, htmlDocumentationURL, parentTitle, versionTitle,swaggerContent);
 				}
 			} else {
 				throw new RuntimeException("Swagger Definition is missing version and title information");
@@ -87,14 +92,14 @@ public class SwaggerConfluenceUploader {
 	 */
 	private String generatePagesInNonHierarchyMode(String specFile, String parentPageID, String userName,
 			String password, String confluenceURL, String spaceKey, String alternateURL, String clientkitURL,
-			String htmlDocumentationURL, String parentTitle, String versionTitle) {
+			String htmlDocumentationURL, String parentTitle, String versionTitle,String swaggerContent) {
 		LOGGER.log(Level.INFO, "Hierarchy Mode is Set to False!!!");
 		
 		LOGGER.log(Level.INFO, "About to generate Page --> " + parentTitle);
 		
 		String swaggerPageContent = StringUtils.isNotEmpty(alternateURL)
-				? swaggerMacroContent(alternateURL, clientkitURL, htmlDocumentationURL)
-				: swaggerMacroContent(specFile, clientkitURL, htmlDocumentationURL);
+				? swaggerMacroContent(alternateURL, clientkitURL, htmlDocumentationURL,swaggerContent)
+				: swaggerMacroContent(specFile, clientkitURL, htmlDocumentationURL,swaggerContent);
 		
 		ConfluenceVo childPageVo = createSwaggerPage(
 				new ConfluenceVo(userName, password, confluenceURL, "", parentPageID, specFile,
@@ -122,12 +127,12 @@ public class SwaggerConfluenceUploader {
 	 */
 	private String generatePagesinHierarchyMode(String specFile, String parentPageID, String userName, String password,
 			String confluenceURL, String spaceKey, String alternateURL, String clientkitURL,
-			String htmlDocumentationURL, String parentTitle, String versionTitle) {
+			String htmlDocumentationURL, String parentTitle, String versionTitle,String swaggerContent) {
 		LOGGER.log(Level.INFO, "Hierarchy Mode is Set to True!!!");
 		
 		String swaggerPageContent = StringUtils.isNotEmpty(alternateURL)
-				? swaggerMacroContent(alternateURL, clientkitURL, htmlDocumentationURL)
-				: swaggerMacroContent(specFile, clientkitURL, htmlDocumentationURL);
+				? swaggerMacroContent(alternateURL, clientkitURL, htmlDocumentationURL,swaggerContent)
+				: swaggerMacroContent(specFile, clientkitURL, htmlDocumentationURL,swaggerContent);
 
 		// Create a Page whose name is same as Swagger Title Ex: Pet
 		// Store
@@ -166,7 +171,7 @@ public class SwaggerConfluenceUploader {
 	 * @param clientkitURL
 	 * @return
 	 */
-	private String swaggerMacroContent(String swaggerLoctaion, String clientkitURL, String htmlDocumentationURL) {
+	private String swaggerMacroContent(String swaggerLoctaion, String clientkitURL, String htmlDocumentationURL,String swaggerContent) {
 
 		StringBuilder macroString = new StringBuilder();
 		macroString
@@ -200,8 +205,8 @@ public class SwaggerConfluenceUploader {
 		macroString.append("</tbody></table>")
 				.append("<ac:structured-macro ac:name=\"open-api\" ac:schema-version=\"1\" ac:macro-id=\"86cdf71a-5e3a-4a30-833a-70548a238b4d\">")
 				.append("<ac:parameter ac:name=\"validatorUrl\">None</ac:parameter>")
-				.append("<ac:parameter ac:name=\"url\">").append(swaggerLoctaion)
-				.append("</ac:parameter></ac:structured-macro></ac:rich-text-body></ac:structured-macro>");
+				.append("<ac:plain-text-body><![CDATA[").append(swaggerContent)
+				.append("]]></ac:plain-text-body></ac:structured-macro></ac:rich-text-body></ac:structured-macro>");
 
 		return macroString.toString();
 	}
